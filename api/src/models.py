@@ -1,13 +1,9 @@
 import sqlalchemy as _sql
 import sqlalchemy.orm as _orm
-
+from typing import Dict
 import database as _database
-
-class Report(_database.Base):
-    __tablename__ = "signalements"
-    id = _sql.Column(_sql.Integer, primary_key=True, index=True)
-    author = _sql.Column(_sql.String, nullable=False)
-    observation = _sql.Column(_sql.String, nullable=False)
+from sqlalchemy.ext.mutable import MutableDict
+from sqlalchemy.dialects.postgresql import JSONB
 
 class Author(_database.Base):
     __tablename__ = "authors"
@@ -16,6 +12,22 @@ class Author(_database.Base):
     email = _sql.Column(_sql.String, nullable=False, primary_key = True, index=True)
     birth_date = _sql.Column(_sql.String, nullable=False)
     sex = _sql.Column(_sql.String, nullable=False) 
+
+class Report(_database.Base):
+    __tablename__ = "signalements"
+    id = _sql.Column(_sql.Integer, primary_key=True, index=True)
+    author = _sql.Column(_sql.String, nullable=False)
+    observation = _sql.Column(_sql.String)
+    description = _sql.Column(_sql.String)
+    
+
+# class Author:
+#     first_name: str
+#     last_name: str
+#     email: str
+#     birth_date: str
+#     sex: str
+
     
 class Observation(_database.Base):
     __tablename__ = "observations"
