@@ -1,4 +1,5 @@
 import fastapi as _fastapi
+from fastapi.middleware.cors import CORSMiddleware
 import json
 from typing import List
 import sqlalchemy.orm as _orm
@@ -7,18 +8,28 @@ from models import Author
 
 app = _fastapi.FastAPI()
 
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 _services.create_database()
 
 
-@app.post("/signalements", response_model=_schemas._SignalementCreate)
-def create_signalement(signalement: _schemas._SignalementCreate, db: _orm.Session=_fastapi.Depends(_services.get_db)):
+@app.post("/reports", response_model=_schemas._ReportCreate)
+def create_report(report: _schemas._ReportCreate, db: _orm.Session=_fastapi.Depends(_services.get_db)):
     raised_email_detail = {}
     raised_email_detail["author"] = {}
     raised_email_detail["author"]["email"] = ['This value already exist']
 
     author: Author = {}
-    if signalement.author is not None:
-        author = json.loads(signalement.author)
+    if report.author is not None:
+        author = json.loads(report.author)
 
     if author is None or author["email"] is None:
         raise _fastapi.HTTPException(status_code=400, detail='Author is missing data...')
@@ -28,25 +39,30 @@ def create_signalement(signalement: _schemas._SignalementCreate, db: _orm.Sessio
     if author_email_already_exist is not None:
         raise _fastapi.HTTPException(status_code=400, detail=raised_email_detail)
     
-    signalement_count = db.query(_models.Signalement).count()
+    reports_count = db.query(_models.Report).count()
     observations: List[_models.Observation] = []
     
-    for observation_id in signalement.observation_ids:
+    for observation_id in report.observation_ids:
         observation_db = db.query(_models.Observation).filter(_models.Observation.id == observation_id)
         if observation_db is not None:
             observations.append(observation_db)
         else:
             print('Can not find Observation with id', observation_id)
 
-    db_signalement = _models.Signalement(id = signalement_count, author = signalement.author, observations = observations)
+    db_report = _models.Report(id = reports_count, author = report.author, observations = observations)
     db_author = _models.Author(author)
-    db.add(signalement)
+    db.add(db_report)
     db.add(db_author)
     db.commit()
-    db.refresh(db_signalement)
+    db.refresh(db_report)
     db.refresh(db_author)
-    return db_signalement
+    return db_report
 
+
+@app.get("/reports", response_model=List[_schemas._ReportSelect])
+def get_report(db: _orm.Session=_fastapi.Depends(_services.get_db)):
+    db_reports = db.query(_models.Report).all()
+    return db_reports
 
 @app.get("/observations", response_model=List[_schemas._ObservationBase])
 def get_observations(db: _orm.Session=_fastapi.Depends(_services.get_db)):

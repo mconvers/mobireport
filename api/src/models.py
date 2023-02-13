@@ -3,7 +3,7 @@ import sqlalchemy.orm as _orm
 
 import database as _database
 
-class Signalement(_database.Base):
+class Report(_database.Base):
     __tablename__ = "signalements"
     id = _sql.Column(_sql.Integer, primary_key=True, index=True)
     author = _sql.Column(_sql.String, nullable=False)
