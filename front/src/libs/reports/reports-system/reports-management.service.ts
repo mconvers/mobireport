@@ -88,6 +88,8 @@ export class ReportsManagementService {
   openReportPrompt(reportToEdit?: Report) {
     this._dialog
       .open(ReportPromptComponent, {
+        maxHeight: '90vh',
+        maxWidth: '90vw',
         data: reportToEdit ? { ...reportToEdit } : undefined,
       })
       .afterClosed()

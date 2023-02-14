@@ -1,7 +1,7 @@
 <div class="report-prompt-container">
   <div class="prompt-header">
     <h2>{{ report ? "Modifier un signalement" : "Créer un signalement" }}</h2>
-    <button mat-raised-button (click)="dismiss()">
+    <button mat-raised-button (click)="dismiss()" class="mr-button">
       <mat-icon>close</mat-icon>Fermer
     </button>
   </div>
@@ -58,6 +58,8 @@
         </mat-form-field>
         <div>
           <button
+            class="mr-button"
+            [ngClass]="{ disabled: !authorFormGroup.valid }"
             mat-raised-button
             matStepperNext
             [disabled]="!authorFormGroup.valid"
@@ -84,6 +86,10 @@
         <div>
           <button mat-button matStepperPrevious>Retour</button>
           <button
+            class="mr-button"
+            [ngClass]="{
+              disabled: !authorFormGroup.valid || !descriptionFormGroup.valid
+            }"
             mat-raised-button
             matStepperNext
             [disabled]="!authorFormGroup.valid || !descriptionFormGroup.valid"
@@ -133,6 +139,13 @@
       </mat-form-field>
       <div>
         <button
+          class="mr-button"
+          [ngClass]="{
+            disabled:
+              !authorFormGroup.valid ||
+              currentObservations.length < 1 ||
+              !descriptionFormGroup.valid
+          }"
           mat-raised-button
           type="submit"
           (click)="submit()"
