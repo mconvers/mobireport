@@ -3,7 +3,7 @@
 **Pour un fonctionnement optimal, merci de lancer le back-end avant l'app Angular.**
 
 ## Front-end
-App Angular v15, qui permet depuis la v14 de faire de components standalone, c'est le cas ici pour éviter les dépendences circulaires (bien que le projet soit simple)\
+App Angular v15, qui permet depuis la v14 de faire des components standalone, c'est le cas ici pour éviter les dépendences circulaires (bien que le projet soit simple)\
 Utilisation de mat angular (notamment pour la liste qui est une mat-table et le prompt qui est un dialog)\
 Utilisation de variables scss et class type "mr-" pour mutualiser le css\
 Utilisation de RxJS pour le state management\
