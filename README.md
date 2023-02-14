@@ -32,6 +32,10 @@ Vu le nombre assez faible de endpoints, je n'ai pas segmenté avec des routers, 
 ```
 activate
 ```
++ Installer les requirements si besoin:
+```
+python3 -m pip install requests
+```
 + Naviguer vers api/src
 + Lancer l'app via:
 ```
