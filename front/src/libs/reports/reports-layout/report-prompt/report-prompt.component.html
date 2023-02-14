@@ -1,0 +1,150 @@
+<div class="report-prompt-container">
+  <div class="prompt-header">
+    <h2>{{ report ? "Modifier un signalement" : "Créer un signalement" }}</h2>
+    <button mat-raised-button (click)="dismiss()">
+      <mat-icon>close</mat-icon>Fermer
+    </button>
+  </div>
+  <mat-vertical-stepper [linear]="true" #stepper [animationDuration]="'500'">
+    <mat-step [stepControl]="authorFormGroup">
+      <form [formGroup]="authorFormGroup" class="mr-full-width">
+        <ng-template matStepLabel>Auteur</ng-template>
+        <mat-form-field appearance="outline" class="mr-full-width">
+          <mat-label>Prénom</mat-label>
+          <input matInput formControlName="first_name" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mr-full-width">
+          <mat-label>Nom</mat-label>
+          <input matInput formControlName="last_name" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mr-full-width">
+          <mat-label>Date de naissance</mat-label>
+          <input
+            matInput
+            [matDatepicker]="dp"
+            formControlName="birth_date"
+            [min]="minDate"
+            [max]="maxDate"
+          />
+          <mat-hint>MM/DD/YYYY</mat-hint>
+          <mat-datepicker-toggle
+            matIconSuffix
+            [for]="dp"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #dp></mat-datepicker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mr-full-width">
+          <mat-label>Sexe</mat-label>
+          <mat-select formControlName="sex" required>
+            <mat-option
+              *ngFor="let sexOption of sexOptions"
+              [value]="sexOption"
+            >
+              {{ sexOption }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mr-full-width">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" required />
+          <mat-error
+            *ngIf="authorFormGroup.controls.email.hasError('emailUsed')"
+            >Cet email est déjà utilisé</mat-error
+          >
+        </mat-form-field>
+        <div>
+          <button
+            mat-raised-button
+            matStepperNext
+            [disabled]="!authorFormGroup.valid"
+          >
+            Suivant
+          </button>
+        </div>
+      </form>
+    </mat-step>
+
+    <mat-step
+      [stepControl]="descriptionFormGroup"
+      [editable]="authorFormGroup.valid"
+    >
+      <form [formGroup]="descriptionFormGroup" class="mr-full-width">
+        <ng-template matStepLabel>Description</ng-template>
+        <mat-form-field appearance="outline" class="mr-full-width">
+          <textarea
+            matInput
+            formControlName="description"
+            [required]="true"
+          ></textarea>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperPrevious>Retour</button>
+          <button
+            mat-raised-button
+            matStepperNext
+            [disabled]="!authorFormGroup.valid || !descriptionFormGroup.valid"
+          >
+            Suivant
+          </button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [editable]="authorFormGroup.valid && descriptionFormGroup.valid">
+      <ng-template matStepLabel>Observations</ng-template>
+      <mat-form-field appearance="outline" class="mr-full-width">
+        <mat-chip-grid #chipGrid aria-label="Fruit selection">
+          <mat-chip-row
+            *ngFor="let currentObservation of currentObservations"
+            (removed)="removeObservation(currentObservation.id)"
+          >
+            {{ currentObservation.name }}
+            <button
+              matChipRemove
+              [attr.aria-label]="'remove ' + currentObservation.name"
+            >
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        </mat-chip-grid>
+
+        <input
+          #chipInput
+          [matChipInputFor]="chipGrid"
+          [matAutocomplete]="auto"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          (matChipInputTokenEnd)="addObservation($event, chipInput)"
+        />
+        <!-- </mat-chip-list> -->
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          (optionSelected)="selectObservation($event)"
+        >
+          <mat-option
+            *ngFor="let observation of observations$$ | async"
+            [value]="observation.id"
+          >
+            {{ observation.name }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+      <div>
+        <button
+          mat-raised-button
+          type="submit"
+          (click)="submit()"
+          [disabled]="
+            !authorFormGroup.valid ||
+            currentObservations.length < 1 ||
+            !descriptionFormGroup.valid
+          "
+        >
+          {{ report ? "Modifier" : "Créer" }}
+        </button>
+      </div>
+    </mat-step>
+  </mat-vertical-stepper>
+</div>

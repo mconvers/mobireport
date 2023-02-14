@@ -1,0 +1,52 @@
+.reports-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  .report-table {
+    table {
+      width: 100%;
+    }
+  }
+}
+
+tr.example-detail-row {
+  height: 0;
+}
+
+tr.example-element-row:not(.example-expanded-row):hover {
+  background: whitesmoke;
+}
+
+tr.example-element-row:not(.example-expanded-row):active {
+  background: #efefef;
+}
+
+.example-element-row td {
+  border-bottom-width: 0;
+  cursor: pointer;
+}
+
+.example-element-detail {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+
+  .bottom-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 5px;
+    margin: 10px;
+    .action {
+      display: flex;
+      align-items: center;
+      &.delete {
+        color: red;
+      }
+    }
+  }
+}

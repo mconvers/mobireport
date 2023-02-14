@@ -1,7 +1,6 @@
 import database as _database
 import models as _models
 import sqlalchemy.orm as _orm
-import fastapi as _fastapi
 
 def create_database():
     return _database.Base.metadata.create_all(bind=_database.engine)

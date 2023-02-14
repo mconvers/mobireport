@@ -17,17 +17,8 @@ class Report(_database.Base):
     __tablename__ = "signalements"
     id = _sql.Column(_sql.Integer, primary_key=True, index=True)
     author = _sql.Column(_sql.String, nullable=False)
-    observation = _sql.Column(_sql.String)
+    observations = _sql.Column(_sql.String)
     description = _sql.Column(_sql.String)
-    
-
-# class Author:
-#     first_name: str
-#     last_name: str
-#     email: str
-#     birth_date: str
-#     sex: str
-
     
 class Observation(_database.Base):
     __tablename__ = "observations"

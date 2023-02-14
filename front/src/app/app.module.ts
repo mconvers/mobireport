@@ -1,10 +1,12 @@
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
 
-import { AppComponent } from './app.component';
+import { DatePipe } from '@angular/common';
+import { MatNativeDateModule } from '@angular/material/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ReportsListComponent } from '../libs/signalements/signalements-layout/reports-list/reports-list.component';
+import { ReportsListComponent } from '../libs/reports/reports-layout/reports-list/reports-list.component';
+import { AppComponent } from './app.component';
 
 @NgModule({
   declarations: [AppComponent],
@@ -13,8 +15,9 @@ import { ReportsListComponent } from '../libs/signalements/signalements-layout/r
     HttpClientModule,
     BrowserAnimationsModule,
     ReportsListComponent,
+    MatNativeDateModule,
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

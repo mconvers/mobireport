@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import { of, switchMap, tap } from 'rxjs';
+import { ReportsManagementService } from '../libs/reports/reports-system/reports-management.service';
 import { ObservationsManagementService } from '../libs/observations/observations-system/observations-management.service';
-import { ReportsManagementService } from '../libs/signalements/signalements-system/signalements-management.service';
-import { ReportsListComponent } from '../libs/signalements/signalements-layout/reports-list/reports-list.component';
 
 @Component({
   selector: 'app-root',
@@ -11,7 +9,7 @@ import { ReportsListComponent } from '../libs/signalements/signalements-layout/r
 })
 export class AppComponent {
   constructor(
-    private _observationsManagementService: ObservationsManagementService,
-    private _reportsManagementService: ReportsManagementService
+    private _reportsManagementService: ReportsManagementService,
+    private _observationsManagementService: ObservationsManagementService
   ) {}
 }

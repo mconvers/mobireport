@@ -1,23 +1,18 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observation } from './observation.model';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, of, switchMap, take, tap } from 'rxjs';
 import { API_URL } from '../../../env';
-import { BehaviorSubject, Observable, switchMap, of, tap } from 'rxjs';
+import { Observation } from './observation.model';
 
 const observationsEndpoints = '/observations';
 @Injectable({
   providedIn: 'root',
 })
 export class ObservationsManagementService {
-  availableObservations$: Observable<Observation[]> = new Observable<
-    Observation[]
-  >();
-
   availableObservations$$ = new BehaviorSubject<Observation[]>([]);
 
   constructor(private _httpClient: HttpClient) {
-    this.availableObservations$ = this.getObservations$();
-    this.availableObservations$
+    this.getObservations$()
       .pipe(
         switchMap((observations) => {
           this.availableObservations$$.next(observations);
@@ -36,7 +31,24 @@ export class ObservationsManagementService {
     return this._httpClient.get<Observation[]>(API_URL + observationsEndpoints);
   }
 
+  pullDataOnce$() {
+    return this._httpClient
+      .get<Observation[]>(API_URL + observationsEndpoints)
+      .pipe(
+        take(1),
+        tap((observations) => {
+          this.availableObservations$$.next(observations);
+        })
+      );
+  }
+
   initObservations$() {
-    return this._httpClient.get<string>(API_URL + '/init_db');
+    return this._httpClient
+      .get<string>(API_URL + observationsEndpoints + '/init')
+      .pipe(
+        switchMap(() => {
+          return this.pullDataOnce$();
+        })
+      );
   }
 }

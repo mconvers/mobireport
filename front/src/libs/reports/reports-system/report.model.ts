@@ -4,6 +4,12 @@ export interface Report {
   id: number;
   author: Author;
   description: string;
+  observations: Observation[];
+}
+
+export interface ReportPostRequest {
+  author: string;
+  description: string;
   observations: number[];
 }
 

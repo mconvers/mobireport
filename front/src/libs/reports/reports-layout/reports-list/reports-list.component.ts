@@ -10,18 +10,19 @@ import { Component, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { Observable, tap } from 'rxjs';
-import { Report } from '../../signalements-system/report.model';
-import { ReportsManagementService } from '../../signalements-system/signalements-management.service';
-import { ReportPromptComponent } from '../report-prompt/report-prompt.component';
+import { BehaviorSubject, tap } from 'rxjs';
+import { Report } from '../../reports-system/report.model';
+import { ReportsManagementService } from '../../reports-system/reports-management.service';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 
+@UntilDestroy()
 @Component({
   selector: 'app-reports-list',
   templateUrl: './reports-list.component.html',
@@ -53,7 +54,7 @@ import { ReportPromptComponent } from '../report-prompt/report-prompt.component'
   ],
 })
 export class ReportsListComponent {
-  reports$$ = new Observable<Report[]>();
+  reports$$ = new BehaviorSubject<Report[]>([]);
 
   columnsToDisplay: string[] = ['id', 'email'];
   columnsToDisplayWithExpand = [...this.columnsToDisplay, 'expand'];
@@ -79,14 +80,12 @@ export class ReportsListComponent {
     return this._sort;
   }
 
-  constructor(
-    private _reportsManagementService: ReportsManagementService,
-    private _dialog: MatDialog
-  ) {
+  constructor(private _reportsManagementService: ReportsManagementService) {
     this.dataSource = new MatTableDataSource();
-    this.reports$$ = this._reportsManagementService.availableReports$;
+    this.reports$$ = this._reportsManagementService.availableReports$$;
     this.reports$$
       .pipe(
+        untilDestroyed(this),
         tap((reports) => {
           this.dataSource = new MatTableDataSource(reports);
         })
@@ -103,14 +102,30 @@ export class ReportsListComponent {
     }
   }
 
+  /**
+   * Open a prompt to edit the report
+   * @param report
+   */
   editReport(report: Report) {
     this.openReportPrompt(report);
   }
-  openReportPrompt(report?: Report) {
-    this._dialog
-      .open(ReportPromptComponent)
-      .afterClosed()
-      .pipe(tap((report) => {}))
+
+  /**
+   * Delete the report
+   * @param reportId
+   */
+  deleteReport(reportId: string) {
+    this._reportsManagementService
+      .deleteReport$(reportId)
+      .pipe(untilDestroyed(this))
       .subscribe();
+  }
+
+  /**
+   * Open a prompt to edit or create a report
+   * @param report
+   */
+  openReportPrompt(report?: Report) {
+    this._reportsManagementService.openReportPrompt(report);
   }
 }

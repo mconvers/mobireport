@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@angular/material-moment-adapter": "^15.1.4",
+    "@ngneat/until-destroy": "^9.2.3"
+  }
+}
